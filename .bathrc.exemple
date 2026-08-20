@@ -1,2 +1,0 @@
-# Global Bash Config
-eval "$(direnv hook bash)"
