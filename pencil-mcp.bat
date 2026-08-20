@@ -22,4 +22,5 @@ if "%PENCIL_PATH%"=="" (
 )
 
 :: Executar o servidor MCP com os argumentos passados
-"%PENCIL_PATH%\out\mcp-server-windows-x64.exe" %*
+:: Executar o servidor MCP filtrando logs do stdout para evitar erros de protocolo (SSE/JSON-RPC)
+powershell -NoProfile -Command "& { & '%PENCIL_PATH%\\out\\mcp-server-windows-x64.exe' %* | ForEach-Object { if ($_ -match '^\\s*\\{') { $_ } } }"
