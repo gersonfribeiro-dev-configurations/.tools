@@ -1,55 +1,57 @@
-# 🛠️ OpenCode Tools Repository
+# 🛠️ Ferramentas de Desenvolvimento (Global Tools)
 
-Este repositório contém os scripts, executáveis e binários locais que expandem as capacidades do assistente OpenCode através do Model Context Protocol (MCP).
+Este diretório centraliza binários e scripts de utilidade utilizados em múltiplos projetos e configurações de ambiente do usuário.
 
-Enquanto o repositório [.agents](https://github.com/gersonfribeiro-dev-configurations/.agents) define o **comportamento** (a mente) e o [.config/opencode](https://github.com/gersonfribeiro-dev-configurations/.opencode) define a **conectividade** (os nervos), este repositório fornece a **capacidade de execução** (os braços).
+## 🚀 Configuração do `direnv`
 
-## 📦 Componentes
+O `direnv` é uma ferramenta essencial para o ecossistema de desenvolvimento, permitindo que variáveis de ambiente sejam carregadas automaticamente ao entrar em diretórios específicos (via arquivos `.envrc`).
 
-### 1. Pencil MCP (`pencil-mcp.bat`)
+### 1. Instalação do Binário
 
-Este é um wrapper de inicialização para a integração com o `pen.dev`.
+Se você ainda não possui o `direnv` instalado:
 
-- **Função:** Garante que o servidor MCP do Pencil seja iniciado com os parâmetros corretos (`--app desktop` e `--agent openCodeCLI`).
-- **Uso:** É chamado automaticamente pelo OpenCode via configuração no `opencode.json`.
+- **Windows (via Winget)**:
 
-<!--
-### 2. Scripts de Automação
-(Espaço reservado para novos scripts de shell, python ou batch que automatizem tarefas repetitivas do workspace).
--->
----
+  ```powershell
+  winget install direnv
+  ```
 
-## 🚀 Como Instalar e Configurar
+- **Instalação Manual**:
+  1. Baixe o binário `direnv-windows-amd64.exe` no [GitHub Releases](https://github.com/direnv/direnv/releases).
+  2. Renomeie para `direnv.exe`.
+  3. Mova o arquivo para `C:\Users\Gerson Ribeiro\.tools\`.
+  4. Adicione `C:\Users\Gerson Ribeiro\.tools` ao seu **PATH do Sistema**.
 
-Para que as ferramentas deste repositório funcionem, siga estes passos:
+### 2. Ativação do Hook (Git Bash)
 
-1. **Clone o Repositório:**
-   Clone este repositório na pasta `~/.tools/` (ou o caminho configurado no seu `opencode.json`).
+Para que o `direnv` funcione, ele precisa de um "gancho" no seu shell. Adicione a seguinte linha ao seu arquivo `~/.bashrc` (ou `C:\Users\Gerson Ribeiro\.bashrc`):
 
-2. **Configure o Caminho no OpenCode:**
-   No seu arquivo `opencode.json`, aponte o comando do MCP para o script correspondente:
+```bash
+eval "$(direnv hook bash)"
+```
 
-   ```json
-   "pencil": {
-     "type": "local",
-     "command": ["~/.tools/pencil-mcp.bat", "--app", "desktop", "--agent", "openCodeCLI"],
-     "enabled": true
-   }
+*Após adicionar, execute `source ~/.bashrc` ou reinicie o terminal.*
+
+### 3. O conceito do `.bathrc`
+
+Para manter a organização, utilizamos a convenção `.bathrc`. Embora o Bash utilize o `.bashrc`, o padrão `.bathrc` neste ambiente serve como um repositório de scripts e configurações globais que podem ser versionados e compartilhados entre diferentes máquinas.
+
+- **Responsabilidade**: Centralizar hooks de ambiente, aliases globais e scripts de setup.
+- **Como carregar**: No seu `.bashrc` global, você pode referenciar as configurações do diretório `.bathrc` utilizando o comando `source` ou `.` (dot operator).
+
+### 4. Fluxo de Trabalho com `.envrc`
+
+Ao entrar em um projeto que possua um arquivo `.envrc`:
+
+1. O `direnv` detectará o arquivo.
+2. Por segurança, ele não carregará as variáveis automaticamente na primeira vez.
+3. Execute o comando:
+
+   ```bash
+   direnv allow
    ```
 
-3. **Permissões de Execução:**
-   No Windows, certifique-se de que os arquivos `.bat` tenham permissão de execução. No Linux/Mac, utilize `chmod +x` nos scripts.
+4. Agora, todas as variáveis definidas no `.envrc` estão disponíveis para o seu terminal e para as ferramentas que o utilizam (como o opencode).
 
 ---
-
-## 🛡️ Segurança
-
-As ferramentas locais têm acesso ao seu sistema de arquivos e terminal.
-
-- **Auditoria:** Sempre revise o conteúdo de scripts `.bat` ou `.sh` antes de executá-los.
-- **Isolamento:** Sempre que possível, utilize MCPs que rodam dentro de containers (via `MCP_DOCKER`) para isolar a execução da IA do seu sistema host.
-
-## 🔗 Links Úteis
-
-- [Documentação de Configuração Global](https://github.com/gersonfribeiro-dev-configurations/.config/opencode)
-- [Diretrizes de Agentes e Skills](https://github.com/gersonfribeiro-dev-configurations/.agents)
+**Dica**: Mantenha seus tokens secretos em variáveis de ambiente do sistema e referencie-as no `.envrc` para evitar a exposição de senhas em arquivos de texto.
